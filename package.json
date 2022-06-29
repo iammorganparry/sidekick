@@ -1,0 +1,34 @@
+{
+  "name": "xtab-video",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "tsc": "tsc",
+    "build": "vite build",
+    "background": "vite build --config vite.config.background.ts",
+    "preview": "vite preview",
+    "manifest": "cp manifest.json dist/manifest.json",
+    "deploy": "run-s tsc && run-s manifest && run-s build && run-s background"
+  },
+  "dependencies": {
+    "@stitches/react": "^1.2.8",
+    "@types/node": "^18.0.0",
+    "@xstate/react": "^3.0.0",
+    "path": "^0.12.7",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-draggable": "^4.4.5",
+    "vite-plugin-react-svg": "^0.2.0",
+    "xstate": "^4.32.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.14",
+    "@types/react-dom": "^18.0.5",
+    "@types/vite-plugin-react-svg": "^0.2.1",
+    "@vitejs/plugin-react": "^1.3.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^4.6.3",
+    "vite": "^2.9.9"
+  }
+}

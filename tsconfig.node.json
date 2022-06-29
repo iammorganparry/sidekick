@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "rootDir": ".",
+    "baseUrl": "."
+  },
+  "include": [
+    "vite.config.ts",
+    "config",
+    "config/readAliasFromConfig.ts",
+    "tsconfig.json"
+  ]
+}

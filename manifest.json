@@ -1,0 +1,30 @@
+{
+    "name": "XTab-Video",
+    "description": "View videos across tabs",
+    "version": "0.0.0",
+    "manifest_version": 3,
+    "background": {
+        "service_worker": "background/background.umd.js"
+    },
+    "action": {
+        "default_popup": "index.html",
+        "default_icon": {}
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "https://*/*"
+            ],
+            "run_at": "document_end",
+            "js": [
+                "content/video.umd.js"
+            ]
+        }
+    ],
+    "icons": {},
+    "permissions": [
+        "activeTab",
+        "tabs",
+        "storage"
+    ]
+}
