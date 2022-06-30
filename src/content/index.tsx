@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { Providers } from '../components/Providers'
 import { Video } from './video/Video'
 
 const renderVideoInVideo = () => {

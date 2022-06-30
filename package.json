@@ -12,13 +12,16 @@
     "deploy": "run-s tsc && run-s manifest && run-s build && run-s background"
   },
   "dependencies": {
-    "@stitches/react": "^1.2.8",
+    "@nextui-org/react": "^1.0.0-beta.9",
     "@types/node": "^18.0.0",
+    "@types/react-icons": "^3.0.0",
     "@xstate/react": "^3.0.0",
+    "next-themes": "^0.2.0",
     "path": "^0.12.7",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-draggable": "^4.4.5",
+    "react-icons": "^4.4.0",
     "vite-plugin-react-svg": "^0.2.0",
     "xstate": "^4.32.1",
     "zod": "^3.17.3"

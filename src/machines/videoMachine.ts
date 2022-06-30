@@ -7,21 +7,27 @@ export const videoMachine = createMachine({
         videoSrc: undefined as string | undefined
     },
     schema: {
-        events: {} as { type: 'SET_URL', url: string },
+        events: {} as { type: 'SET_URL', url: string } |
+        { type: 'HIDE' },
         services: {} as {
             listenForMessages: {
                 data: string
             }
         }
     },
+    tsTypes: {} as import("./videoMachine.typegen").Typegen0,
     states: {
         reciever: {
             on: {
                 SET_URL: {
                     actions: 'setUrl'
+                },
+                HIDE: {
+                    target: "hidden"
                 }
             }
         },
+        hidden: {},
         error: {}
     }
 }, {
