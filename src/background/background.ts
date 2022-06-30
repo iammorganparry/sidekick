@@ -1,4 +1,10 @@
 
+async function getCurrentTab() {
+    let queryOptions = { active: true, lastFocusedWindow: true };
+    // `tab` will either be a `tabs.Tab` instance or `undefined`.
+    let [tab] = await chrome.tabs.query(queryOptions);
+    return tab;
+}
 
 let youtubeUrl = ''
 const handleYoutube = (): string => {
@@ -19,30 +25,21 @@ const handleYoutube = (): string => {
     return youtubeUrl
 }
 
-const handleComms = (tabId: number, changeInfo: chrome.tabs.TabChangeInfo) => {
+const handleComms = async (activeInfo: chrome.tabs.TabActiveInfo) => {
 
     // get all the tabs
 
-
-    chrome.tabs.query({ currentWindow: true }, function (tabs) {
-        const youtubeUrl = handleYoutube()
-        if (chrome.runtime.lastError) {
-            console.log('Error: ', chrome.runtime.lastError)
-        } else {
-            tabs.forEach((tab) => {
-                if (tab.id) {
-                    chrome.tabs.sendMessage(tab.id, {
-                        type: 'setYoutubeUrl',
-                        url: youtubeUrl
-                    })
-                }
-            })
-        }
-
-    })
+    const tab = await getCurrentTab()
+    const youtubeUrl = handleYoutube()
+    if (tab.id) {
+        chrome.tabs.sendMessage(tab.id, {
+            type: 'setYoutubeUrl',
+            url: youtubeUrl
+        })
+    }
 }
 
-chrome.tabs.onUpdated.addListener(handleComms)
+chrome.tabs.onActivated.addListener(handleComms)
 
 
 export { }
