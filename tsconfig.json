@@ -17,10 +17,11 @@
     "baseUrl": ".",
     "rootDir": ".",
     "jsx": "react-jsx",
+    "types": ["chrome"],
     "paths": {
       "@machines": ["./src/machines/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "config"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

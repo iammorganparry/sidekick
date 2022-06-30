@@ -4,7 +4,7 @@
     "version": "0.0.0",
     "manifest_version": 3,
     "background": {
-        "service_worker": "background/background.umd.js"
+        "service_worker": "src/background/background.ts"
     },
     "action": {
         "default_popup": "index.html",
@@ -17,7 +17,7 @@
             ],
             "run_at": "document_end",
             "js": [
-                "content/video.umd.js"
+                "src/content/index.tsx"
             ]
         }
     ],

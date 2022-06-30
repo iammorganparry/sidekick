@@ -9,6 +9,7 @@
     "baseUrl": "."
   },
   "include": [
+    "manifest.json",
     "vite.config.ts",
     "config",
     "config/readAliasFromConfig.ts",
