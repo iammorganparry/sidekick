@@ -19,7 +19,9 @@
     "jsx": "react-jsx",
     "types": ["chrome"],
     "paths": {
-      "@machines": ["./src/machines/*"]
+      "@machines": ["./src/machines/*"],
+      "@schema": ["./src/schema/*"],
+      "@interfaces": ["./src/interfaces/*"]
     }
   },
   "include": ["src", "config"],

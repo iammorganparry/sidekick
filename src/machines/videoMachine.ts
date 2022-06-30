@@ -7,6 +7,7 @@ export const videoMachine = createMachine({
         videoSrc: undefined as string | undefined
     },
     schema: {
+        events: {} as { type: 'SET_URL', url: string },
         services: {} as {
             listenForMessages: {
                 data: string
@@ -15,25 +16,20 @@ export const videoMachine = createMachine({
     },
     states: {
         reciever: {
-            invoke: {
-                src: "listenForMessages",
-                onDone: {
-                },
-                onError: {
-                    target: "error"
+            on: {
+                SET_URL: {
+                    actions: 'setUrl'
                 }
             }
         },
         error: {}
     }
 }, {
-    services: {
-        listenForMessages: async () => {
-            chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-                if (request.videoSrc) {
-                    return request.videoSrc
-                }
-            });
-        }
+    actions: {
+        setUrl: assign((ctx, event) => {
+            return {
+                videoSrc: event.url
+            }
+        })
     }
 })

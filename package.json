@@ -20,7 +20,8 @@
     "react-dom": "^18.0.0",
     "react-draggable": "^4.4.5",
     "vite-plugin-react-svg": "^0.2.0",
-    "xstate": "^4.32.1"
+    "xstate": "^4.32.1",
+    "zod": "^3.17.3"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^1.0.12",
