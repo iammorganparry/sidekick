@@ -1,3 +1,4 @@
+import { CloseMessages } from "../interfaces/messages";
 
 async function getCurrentTab() {
     let queryOptions = { active: true, lastFocusedWindow: true };
@@ -39,7 +40,29 @@ const handleComms = async (activeInfo: chrome.tabs.TabActiveInfo) => {
     }
 }
 
+const sendMessageToCurrentTab = async (message: CloseMessages) => {
+    const tab = await getCurrentTab()
+    if (tab.id) {
+        chrome.tabs.sendMessage(tab.id, message)
+    }
+}
+
+chrome.runtime.onMessage.addListener(async (message: CloseMessages, sender, sendResponse: (msg: CloseMessages) => void) => {
+    if (message.type === 'SHOW_VIDEO') {
+        console.log({ [message.type]: message.show })
+        await chrome.storage.local.set({ [message.type]: message.show })
+    }
+    if (message.type === 'FETCH_VIDEO_STATE') {
+        console.log('Recieved message to fetch video state')
+        const state = await chrome.storage.local.get('SHOW_VIDEO')
+        console.log('Got video state', state)
+        await sendMessageToCurrentTab({
+            type: 'FETCH_VIDEO_STATE',
+            show: state.SHOW_VIDEO as boolean
+        })
+    }
+})
 chrome.tabs.onActivated.addListener(handleComms)
 
 
-export { }
+export { };

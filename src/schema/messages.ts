@@ -5,3 +5,11 @@ export const urlMessageSchema = z.object({
 }).required()
 
 
+export const closeMessages = z.object({
+    type: z.union([
+        z.literal('HIDE_VIDEO'),
+        z.literal('SHOW_VIDEO'),
+        z.literal('FETCH_VIDEO_STATE'),
+    ]),
+    show: z.boolean()
+}).required()

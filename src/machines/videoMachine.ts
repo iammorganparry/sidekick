@@ -8,7 +8,7 @@ export const videoMachine = createMachine({
     },
     schema: {
         events: {} as { type: 'SET_URL', url: string } |
-        { type: 'HIDE' },
+        { type: 'SHOW_VIDEO', show: boolean },
         services: {} as {
             listenForMessages: {
                 data: string
@@ -22,7 +22,7 @@ export const videoMachine = createMachine({
                 SET_URL: {
                     actions: 'setUrl'
                 },
-                HIDE: {
+                SHOW_VIDEO: {
                     target: "hidden"
                 }
             }

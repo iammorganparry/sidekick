@@ -1,4 +1,5 @@
-import { urlMessageSchema } from "src/schema/messages";
+import { closeMessages, urlMessageSchema } from "src/schema/messages";
 import { z } from "zod";
-
-export type Messages = z.infer<typeof urlMessageSchema>;
+export type UrlMessags = z.infer<typeof urlMessageSchema>;
+export type CloseMessages = z.infer<typeof closeMessages>;
+export type Messages = UrlMessags | CloseMessages;
