@@ -1,4 +1,4 @@
-import { Button, styled } from "@nextui-org/react";
+import { styled } from "@nextui-org/react";
 import { useMachine } from "@xstate/react";
 import { useCallback, useEffect, useRef } from "react";
 import Draggable from "react-draggable";
@@ -67,19 +67,19 @@ export const Video = () => {
     }, [])
 
 
-    return !hidden ? (
+    return true ? (
         <>
             <Providers>
-
                 <Draggable nodeRef={ref}>
                     <DragVideo ref={ref} className="adwdawdadw">
                         <ButtonContainer>
-                            <Button light auto onPress={handleClose} icon={<IoMdClose />} flat />
+                            <IoMdClose />
                         </ButtonContainer>
                         <Iframe
                             width="560"
                             height="315"
-                            src={src}
+                            src=""
+                            onDrag={(e) => console.log('am i doing anything??')}
                             title="YouTube video player"
                             frameBorder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; "
