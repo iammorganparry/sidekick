@@ -13,3 +13,8 @@ export const closeMessages = z.object({
     ]),
     show: z.boolean()
 }).required()
+
+export const progressMessageSchema = z.object({
+    type: z.literal('GET_PROGRESS'),
+    progress: z.number()
+}).required()

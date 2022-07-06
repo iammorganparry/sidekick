@@ -46,6 +46,7 @@ export const Video = () => {
                 send({ type: 'SET_URL', url: request.url })
             }
             if (request.type === 'FETCH_VIDEO_STATE') {
+                console.log('recieved message from background', request.show)
                 send({ type: 'SHOW_VIDEO', show: request.show })
             }
 
@@ -67,20 +68,21 @@ export const Video = () => {
     }, [])
 
 
-    return true ? (
+    return !hidden ? (
         <>
             <Providers>
                 <Draggable nodeRef={ref}>
                     <DragVideo ref={ref} className="adwdawdadw">
                         <ButtonContainer>
-                            <IoMdClose />
+                            <IoMdClose onClick={handleClose} />
                         </ButtonContainer>
                         <Iframe
                             width="560"
                             height="315"
-                            src=""
+                            src={src}
                             onDrag={(e) => console.log('am i doing anything??')}
                             title="YouTube video player"
+
                             frameBorder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; "
                             allowFullScreen>

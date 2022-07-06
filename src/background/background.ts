@@ -1,4 +1,5 @@
-import { CloseMessages } from "../interfaces/messages";
+import { getYoutubeCurrentTime } from "../content/media/getYoutubeCurrentTime";
+import { CloseMessages, ProgressMessages } from "../interfaces/messages";
 
 async function getCurrentTab() {
     let queryOptions = { active: true, lastFocusedWindow: true };
@@ -8,6 +9,7 @@ async function getCurrentTab() {
 }
 
 let youtubeUrl = ''
+let youtubeCurrentTime = 0
 const handleYoutube = (): string => {
     chrome.tabs.query({ currentWindow: true }, function (tabs) {
         if (chrome.runtime.lastError) {
@@ -15,14 +17,24 @@ const handleYoutube = (): string => {
         } else {
             return tabs.forEach((tab) => {
                 if (tab.url?.includes('youtube.com')) {
-                    const videoId = tab.url.split('v=')[1].split('&')[0];
-                    youtubeUrl = `https://www.youtube.com/embed/${videoId}`
-                    return youtubeUrl
+                    if (tab?.id && tab?.url) {
+                        // ask for the progress of the video
+                        chrome.tabs.sendMessage(tab?.id, {
+                            type: 'GET_PROGRESS'
+                        }, function (response: ProgressMessages) {
+                            if (response.type === 'GET_PROGRESS') {
+                                youtubeCurrentTime = response.progress
+                            }
+                        })
+                        const videoId = tab.url.split('v=')[1].split('&')[0];
+                        youtubeUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&t=${youtubeCurrentTime}` //can update autoplay setting here
+                        console.log(youtubeUrl)
+                        return youtubeUrl
+                    }
                 }
             })
         }
     })
-    console.log(youtubeUrl)
     return youtubeUrl
 }
 
@@ -42,8 +54,17 @@ const handleComms = async (activeInfo: chrome.tabs.TabActiveInfo) => {
 
 const sendMessageToCurrentTab = async (message: CloseMessages) => {
     const tab = await getCurrentTab()
-    if (tab.id) {
-        chrome.tabs.sendMessage(tab.id, message)
+    if (tab?.id) {
+        chrome.tabs.sendMessage(tab?.id, message)
+    }
+}
+
+
+const handleInjectScripts = (tab: chrome.tabs.Tab) => {
+    if (tab?.id && tab?.url?.includes('youtube.com')) {
+        chrome.tabs.executeScript(tab.id, {
+            code: `${getYoutubeCurrentTime}`
+        })
     }
 }
 
@@ -62,6 +83,8 @@ chrome.runtime.onMessage.addListener(async (message: CloseMessages, sender, send
         })
     }
 })
+
+chrome.tabs.onCreated.addListener(handleInjectScripts)
 chrome.tabs.onActivated.addListener(handleComms)
 
 
