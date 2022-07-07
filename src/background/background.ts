@@ -8,29 +8,38 @@ async function getCurrentTab() {
     return tab;
 }
 
+const AUTO_PLAY = 0
+
+const getCurrentTimeOnVideo = (tab: chrome.tabs.Tab) => {
+    if (tab?.id && tab?.url) {
+        // ask for the progress of the video
+        chrome.tabs.sendMessage(tab?.id, {
+            type: 'GET_PROGRESS'
+        }, function (response: ProgressMessages) {
+            if (chrome.runtime.lastError) {
+                console.log('Error: ', chrome.runtime.lastError)
+            } else {
+                if (response?.type === 'GET_PROGRESS') {
+                    return response.progress
+                }
+            }
+        })
+    }
+    return 0
+}
+
 let youtubeUrl = ''
-let youtubeCurrentTime = 0
 const handleYoutube = (): string => {
     chrome.tabs.query({ currentWindow: true }, function (tabs) {
         if (chrome.runtime.lastError) {
             console.log('Error: ', chrome.runtime.lastError)
         } else {
-            return tabs.forEach((tab) => {
+            tabs.forEach((tab) => {
                 if (tab.url?.includes('youtube.com')) {
-                    if (tab?.id && tab?.url) {
-                        // ask for the progress of the video
-                        chrome.tabs.sendMessage(tab?.id, {
-                            type: 'GET_PROGRESS'
-                        }, function (response: ProgressMessages) {
-                            if (response.type === 'GET_PROGRESS') {
-                                youtubeCurrentTime = response.progress
-                            }
-                        })
-                        const videoId = tab.url.split('v=')[1].split('&')[0];
-                        youtubeUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&t=${youtubeCurrentTime}` //can update autoplay setting here
-                        console.log(youtubeUrl)
-                        return youtubeUrl
-                    }
+                    const youtubeCurrentTime = getCurrentTimeOnVideo(tab)
+                    const videoId = tab.url?.split('v=')[1]?.split('&')[0];
+                    youtubeUrl = `https://www.youtube.com/embed/${videoId}?autoplay=${AUTO_PLAY}&t=${youtubeCurrentTime}` //can update autoplay setting here
+                    console.log(youtubeUrl)
                 }
             })
         }
@@ -39,9 +48,7 @@ const handleYoutube = (): string => {
 }
 
 const handleComms = async (activeInfo: chrome.tabs.TabActiveInfo) => {
-
     // get all the tabs
-
     const tab = await getCurrentTab()
     const youtubeUrl = handleYoutube()
     if (tab.id) {
@@ -51,6 +58,7 @@ const handleComms = async (activeInfo: chrome.tabs.TabActiveInfo) => {
         })
     }
 }
+
 
 const sendMessageToCurrentTab = async (message: CloseMessages) => {
     const tab = await getCurrentTab()
@@ -69,21 +77,38 @@ const handleInjectScripts = (tab: chrome.tabs.Tab) => {
 }
 
 chrome.runtime.onMessage.addListener(async (message: CloseMessages, sender, sendResponse: (msg: CloseMessages) => void) => {
-    if (message.type === 'SHOW_VIDEO') {
-        console.log({ [message.type]: message.show })
-        await chrome.storage.local.set({ [message.type]: message.show })
-    }
-    if (message.type === 'FETCH_VIDEO_STATE') {
-        console.log('Recieved message to fetch video state')
-        const state = await chrome.storage.local.get('SHOW_VIDEO')
-        console.log('Got video state', state)
-        await sendMessageToCurrentTab({
-            type: 'FETCH_VIDEO_STATE',
-            show: state.SHOW_VIDEO as boolean
-        })
+    // handle runtime error
+    if (chrome.runtime.lastError) {
+        console.log('Error: ', chrome.runtime.lastError)
+    } else {
+        if (message.type === 'SHOW_VIDEO') {
+            console.log({ [message.type]: message.show })
+            await chrome.storage.local.set({ [message.type]: message.show })
+        }
+        if (message.type === 'FETCH_VIDEO_STATE') {
+            console.log('Recieved message to fetch video state')
+            const state = await chrome.storage.local.get('SHOW_VIDEO')
+            console.log('Got video state', state)
+            await sendMessageToCurrentTab({
+                type: 'FETCH_VIDEO_STATE',
+                show: state.SHOW_VIDEO as boolean
+            })
+        }
     }
 })
 
+const handleTabsUpdated = (tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) => {
+    // get all the tabs
+    const youtubeUrl = handleYoutube()
+    if (tab.id) {
+        chrome.tabs.sendMessage(tab.id, {
+            type: 'setYoutubeUrl',
+            url: youtubeUrl
+        })
+    }
+}
+
+chrome.tabs.onUpdated.addListener(handleTabsUpdated)
 chrome.tabs.onCreated.addListener(handleInjectScripts)
 chrome.tabs.onActivated.addListener(handleComms)
 

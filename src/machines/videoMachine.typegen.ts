@@ -4,6 +4,8 @@ export interface Typegen0 {
   "@@xstate/typegen": true;
   eventsCausingActions: {
     setUrl: "SET_URL";
+    hideVideo: "HIDE_VIDEO";
+    showVideo: "SHOW_VIDEO";
   };
   internalEvents: {
     "xstate.init": { type: "xstate.init" };
@@ -18,6 +20,11 @@ export interface Typegen0 {
   eventsCausingServices: {};
   eventsCausingGuards: {};
   eventsCausingDelays: {};
-  matchesStates: "reciever" | "hidden" | "error";
+  matchesStates:
+    | "idle"
+    | "splitScreen"
+    | "splitScreenHidden"
+    | "hidden"
+    | "error";
   tags: never;
 }

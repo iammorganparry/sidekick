@@ -2,13 +2,18 @@ import { assign, createMachine } from "xstate";
 
 export const videoMachine = createMachine({
     id: "video",
-    initial: "reciever",
+    initial: "idle",
     context: {
-        videoSrc: undefined as string | undefined
+        videoSrc: undefined as string | undefined,
+        showVideo: false
     },
     schema: {
-        events: {} as { type: 'SET_URL', url: string } |
-        { type: 'SHOW_VIDEO', show: boolean },
+        events: {} as
+            { type: 'SHOW_SPLIT_SCREEN' } |
+            { type: 'HIDE_SPLIT_SCREEN' } |
+            { type: 'SET_URL', url: string } |
+            { type: 'HIDE_VIDEO' } |
+            { type: 'SHOW_VIDEO' },
         services: {} as {
             listenForMessages: {
                 data: string
@@ -17,17 +22,52 @@ export const videoMachine = createMachine({
     },
     tsTypes: {} as import("./videoMachine.typegen").Typegen0,
     states: {
-        reciever: {
+        idle: {
             on: {
                 SET_URL: {
                     actions: 'setUrl'
                 },
+                HIDE_VIDEO: {
+                    cond: (e) => !window.location.href.includes('youtube.com') || !!e.videoSrc,
+                    actions: 'hideVideo'
+                },
+                SHOW_SPLIT_SCREEN: {
+                    target: 'splitScreen'
+                },
                 SHOW_VIDEO: {
-                    target: "hidden"
+                    actions: 'showVideo'
                 }
             }
         },
-        hidden: {},
+        splitScreen: {
+            on: {
+                HIDE_SPLIT_SCREEN: {
+                    target: 'splitScreenHidden'
+                },
+                HIDE_VIDEO: {
+                    actions: 'hideVideo'
+                }
+            }
+        },
+        splitScreenHidden: {
+            on: {
+                SHOW_SPLIT_SCREEN: {
+                    target: 'splitScreen'
+                },
+                SHOW_VIDEO: {
+                    target: 'idle',
+                    actions: 'showVideo'
+                }
+            }
+        },
+        hidden: {
+            on: {
+                SHOW_VIDEO: {
+                    actions: 'showVideo',
+                    target: 'idle'
+                }
+            }
+        },
         error: {}
     }
 }, {
@@ -35,6 +75,16 @@ export const videoMachine = createMachine({
         setUrl: assign((ctx, event) => {
             return {
                 videoSrc: event.url
+            }
+        }),
+        hideVideo: assign((ctx, event) => {
+            return {
+                showVideo: false
+            }
+        }),
+        showVideo: assign((ctx, event) => {
+            return {
+                showVideo: true
             }
         })
     }
