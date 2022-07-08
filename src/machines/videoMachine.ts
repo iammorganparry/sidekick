@@ -42,7 +42,7 @@ export const videoMachine = createMachine({
         splitScreen: {
             on: {
                 HIDE_SPLIT_SCREEN: {
-                    target: 'splitScreenHidden'
+                    target: 'splitScreenHidden',
                 },
                 HIDE_VIDEO: {
                     actions: 'hideVideo'

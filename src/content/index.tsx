@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { Providers } from '../components/Providers'
+import { VideoMachineProvider } from './video/context'
 import { Video } from './video/Video'
 
 const renderVideoInVideo = () => {
@@ -10,7 +10,9 @@ const renderVideoInVideo = () => {
     body?.appendChild(root)
     createRoot(document.getElementById('xtab-video')!).render(
         <StrictMode>
-            <Video />
+            <VideoMachineProvider>
+                <Video />
+            </VideoMachineProvider>
         </StrictMode>
     )
 }

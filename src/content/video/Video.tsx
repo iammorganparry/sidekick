@@ -1,13 +1,12 @@
 import { styled } from "@nextui-org/react";
-import { useMachine } from "@xstate/react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useRef } from "react";
 import Draggable, { DraggableData, DraggableEvent } from "react-draggable";
 import { IoMdClose } from "react-icons/io";
 import { Providers } from "../../components/Providers";
 import { Messages } from "../../interfaces/messages";
 import { sendToBackground } from "../../lib/messages";
-import { videoMachine } from "../../machines/videoMachine";
+import { useVideo } from "./hook";
 import { XIframe } from "./Iframe";
 import { SplitScreen } from "./SplitScreen";
 
@@ -17,7 +16,7 @@ const DragVideo = styled(motion.div, {
     bottom: 25,
     right: 25,
     borderRadius: 10,
-    zIndex: 9999,
+    zIndex: 99998,
     height: 340,
     display: "flex",
     flexDirection: "column",
@@ -36,9 +35,9 @@ const ButtonContainer = styled('div', {
 const OUTSIDE_BOUNDS = 0
 
 export const Video = () => {
-    const [state, send] = useMachine(videoMachine)
+    const { state, send, isShown, videoSrc } = useVideo()
     const ref = useRef<HTMLDivElement>(null)
-    const hidden = !state.context.showVideo || window.location.href.includes('youtube.com')
+    const hidden = !isShown || window.location.href.includes('youtube.com')
     const src = state.context.videoSrc
     const splitScreenTimeout = useRef<NodeJS.Timeout>()
     const listener = useCallback(
@@ -107,21 +106,25 @@ export const Video = () => {
     return (
         <>
             <Providers>
-                {!hidden ? (
-                    <Draggable onDrag={handleSplitScreen} onStop={handleStop} nodeRef={ref}>
-                        <DragVideo
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            ref={ref} className="adwdawdadw">
-                            <ButtonContainer>
-                                <IoMdClose onClick={handleClose} />
-                            </ButtonContainer>
-                            <XIframe src={src} />
-                        </DragVideo>
-                    </Draggable>
-                ) : <></>}
-                {state.matches("splitScreen") ? <SplitScreen src={src} /> : <></>}
+                <AnimatePresence>
+                    {!hidden ? (
+                        <Draggable onDrag={handleSplitScreen} onStop={handleStop} nodeRef={ref}>
+                            <DragVideo
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                ref={ref} className="adwdawdadw">
+                                <ButtonContainer>
+                                    <IoMdClose onClick={handleClose} />
+                                </ButtonContainer>
+                                <XIframe src={src} />
+                            </DragVideo>
+                        </Draggable>
+                    ) : <></>}
+                </AnimatePresence>
+                <AnimatePresence>
+                    {state.matches("splitScreen") ? <SplitScreen src={src} /> : <></>}
+                </AnimatePresence>
             </Providers>
         </>
     )

@@ -2,7 +2,7 @@ import { CSS, styled } from "@nextui-org/react"
 import { FC } from "react"
 
 const Iframe = styled('iframe', {
-    zIndex: 2
+    zIndex: 99998,
 })
 export const XIframe: FC<{ src?: string, css?: CSS }> = ({ src, css }) => (
     <Iframe

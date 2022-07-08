@@ -2,6 +2,7 @@ import { Button, styled } from "@nextui-org/react"
 import { motion } from "framer-motion"
 import { FC, useEffect } from "react"
 import { IoMdClose } from 'react-icons/io'
+import { useVideo } from "./hook"
 import { XIframe } from "./Iframe"
 
 const HalfScreen = styled(motion.div, {
@@ -9,7 +10,7 @@ const HalfScreen = styled(motion.div, {
     height: '100vh',
     width: '50vw',
     top: 0,
-    zIndex: 999,
+    zIndex: 99997,
     display: "flex",
     flexDirection: 'column',
     justifyContent: 'center',
@@ -18,6 +19,7 @@ const HalfScreen = styled(motion.div, {
     borderLeft: '5px solid $accents6',
 })
 export const SplitScreen: FC<{ src?: string }> = ({ src }) => {
+    const { send } = useVideo()
     useEffect(() => {
         const body = document.querySelector('body')
         body!.style!.width = '50%'
@@ -44,7 +46,10 @@ export const SplitScreen: FC<{ src?: string }> = ({ src }) => {
             }}
 
         >
-            <Button auto icon={<IoMdClose />} css={{ position: 'absolute', top: 20, right: 20 }} />
+            <Button auto icon={<IoMdClose />} css={{ position: 'absolute', top: 20, right: 20 }} onPress={() => {
+                send({ type: 'HIDE_SPLIT_SCREEN' })
+                send({ type: 'SHOW_VIDEO' })
+            }} />
             <XIframe src={src} css={{ width: '90%', height: '50%' }} />
         </HalfScreen>
     )
